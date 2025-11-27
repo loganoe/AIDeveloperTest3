@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Simulator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #0056b3; }
+        .portfolio, .stocks { margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #fff; }
+        .portfolio p, .stocks ul { margin: 10px 0; }
+        .stocks ul { list-style: none; padding: 0; }
+        .stocks li { padding: 8px 0; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; }
+        .stocks li:last-child { border-bottom: none; }
+        .buy-sell-form { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; padding: 15px; background-color: #e9f7ef; border-radius: 5px; border: 1px solid #d4edda; }
+        .buy-sell-form label { font-weight: bold; margin-bottom: 5px; }
+        .buy-sell-form input[type="text"], .buy-sell-form input[type="number"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .buy-sell-form button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .buy-sell-form button:hover { background-color: #218838; }
+        .reset-button { background-color: #dc3545; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; float: right; }
+        .reset-button:hover { background-color: #c82333; }
+        .stock-info { flex-grow: 1; }
+        .stock-actions { display: flex; gap: 5px; align-items: center; }
+        .stock-actions input[type="number"] { width: 60px; text-align: center; }
+        .stock-actions button { padding: 5px 10px; font-size: 14px; }
+        .buy-button { background-color: #28a745; }
+        .buy-button:hover { background-color: #218838; }
+        .sell-button { background-color: #007bff; }
+        .sell-button:hover { background-color: #0069d9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Market Simulator</h1>
+
+        <div class="portfolio">
+            <h2>Your Portfolio</h2>
+            <p>Cash: ${{ "{:,.2f}".format(portfolio.cash) }}</p>
+            <h3>Holdings:</h3>
+            {% if portfolio.holdings %}
+                <ul>
+                    {% for holding in portfolio.holdings %}
+                        <li>{{ holding.quantity }} shares of {{ holding.symbol }} (Value: ${{ "{:,.2f}".format(holding.value) }})</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No holdings yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="stocks">
+            <h2>Available Stocks</h2>
+            <ul>
+                {% for stock in stocks %}
+                    <li>
+                        <div class="stock-info">
+                            {{ stock.symbol }}: ${{ "{:,.2f}".format(stock.price) }}
+                        </div>
+                        <div class="stock-actions">
+                            <form action="/buy" method="post" style="display:inline;">
+                                <input type="hidden" name="symbol" value="{{ stock.symbol }}">
+                                <input type="number" name="quantity" value="1" min="1">
+                                <button type="submit" class="buy-button">Buy</button>
+                            </form>
+                            <form action="/sell" method="post" style="display:inline;">
+                                <input type="hidden" name="symbol" value="{{ stock.symbol }}">
+                                <input type="number" name="quantity" value="1" min="1">
+                                <button type="submit" class="sell-button">Sell</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <form action="/reset" method="get">
+            <button type="submit" class="reset-button">Reset Game</button>
+        </form>
+    </div>
+</body>
+</html>
